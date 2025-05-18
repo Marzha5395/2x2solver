@@ -95,4 +95,9 @@ int main(){
     F2();
     cout << state << endl;
     cout << target;
+    while(state != target){
+
+    }
+     
+    return 0;
 }
