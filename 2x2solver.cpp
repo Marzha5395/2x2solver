@@ -168,14 +168,10 @@ void solve(int move, int lastmove){
 }
 
 int main(){
+    
     getinput();
-    // state = "WWWWOOOOGGGGRRRRBBBBYYYY";
     findtarget();
-
-    cout << state << endl;
-    cout << target << endl;
     solve(0, -1);
-
     printsolution();
     
     return 0;
