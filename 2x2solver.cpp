@@ -29,7 +29,7 @@ void R2(){
 }
 
 void Rp(){
-    state = string() + state[0]+state[16]+state[2]+state[18] + state[4]+state[5]+state[6]+state[7] + state[8]+state[1]+state[10]+state[3]
+    state = string() + state[0]+state[18]+state[2]+state[16] + state[4]+state[5]+state[6]+state[7] + state[8]+state[1]+state[10]+state[3]
     + state[13]+state[15]+state[12]+state[14] + state[23]+state[17]+state[21]+state[19] + state[20]+state[9]+state[22]+state[11];
 }
 
