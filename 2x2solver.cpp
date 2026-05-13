@@ -59,7 +59,7 @@ void F2(){
 }
 
 void Fp(){
-    state = string() + state[0]+state[1]+state[12]+state[14] + state[4]+state[3]+state[6]+state[2] + state[10]+state[8]+state[11]+state[9]
+    state = string() + state[0]+state[1]+state[12]+state[14] + state[4]+state[3]+state[6]+state[2] + state[9]+state[11]+state[8]+state[10]
     + state[21]+state[13]+state[20]+state[15] + state[16]+state[17]+state[18]+state[19] + state[5]+state[7]+state[22]+state[23];
 }
 
