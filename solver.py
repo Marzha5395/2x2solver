@@ -1,4 +1,5 @@
 from state import State
+import time
 
 class Solver():
     def __init__(self):
@@ -90,7 +91,7 @@ class Solver():
         return State(state_int), State(target_int)
 
     def solve(self, state, target):
-        state.R2()
+        print(state.decode())
         print(state.decode())
         return []
 

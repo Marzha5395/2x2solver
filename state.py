@@ -99,4 +99,135 @@ class State():
         self.modify(self.RSHIFTS[1], 2, (r3+2)%3)
         self.modify(self.RSHIFTS[6], 2, (r4+1)%3)
         self.modify(self.RSHIFTS[5], 2, (r1+2)%3)
+
+    def U(self):
+
+        p1 = self.read(self.PSHIFTS[0], 3)
+        p2 = self.read(self.PSHIFTS[1], 3)
+        p3 = self.read(self.PSHIFTS[2], 3)
+        p4 = self.read(self.PSHIFTS[3], 3)
+
+        r1 = self.read(self.RSHIFTS[0], 2)
+        r2 = self.read(self.RSHIFTS[1], 2)
+        r3 = self.read(self.RSHIFTS[2], 2)
+        r4 = self.read(self.RSHIFTS[3], 2)
+
+        self.modify(self.PSHIFTS[0], 3, p4)
+        self.modify(self.PSHIFTS[1], 3, p1)
+        self.modify(self.PSHIFTS[2], 3, p2)
+        self.modify(self.PSHIFTS[3], 3, p3)
         
+        self.modify(self.RSHIFTS[0], 2, r4)
+        self.modify(self.RSHIFTS[1], 2, r1)
+        self.modify(self.RSHIFTS[2], 2, r2)
+        self.modify(self.RSHIFTS[3], 2, r3)
+
+    def U2(self):
+
+        p1 = self.read(self.PSHIFTS[0], 3)
+        p2 = self.read(self.PSHIFTS[1], 3)
+        p3 = self.read(self.PSHIFTS[2], 3)
+        p4 = self.read(self.PSHIFTS[3], 3)
+
+        r1 = self.read(self.RSHIFTS[0], 2)
+        r2 = self.read(self.RSHIFTS[1], 2)
+        r3 = self.read(self.RSHIFTS[2], 2)
+        r4 = self.read(self.RSHIFTS[3], 2)
+
+        self.modify(self.PSHIFTS[0], 3, p3)
+        self.modify(self.PSHIFTS[1], 3, p4)
+        self.modify(self.PSHIFTS[2], 3, p1)
+        self.modify(self.PSHIFTS[3], 3, p2)
+        
+        self.modify(self.RSHIFTS[0], 2, r3)
+        self.modify(self.RSHIFTS[1], 2, r4)
+        self.modify(self.RSHIFTS[2], 2, r1)
+        self.modify(self.RSHIFTS[3], 2, r2)
+    
+    def Up(self):
+
+        p1 = self.read(self.PSHIFTS[0], 3)
+        p2 = self.read(self.PSHIFTS[1], 3)
+        p3 = self.read(self.PSHIFTS[2], 3)
+        p4 = self.read(self.PSHIFTS[3], 3)
+
+        r1 = self.read(self.RSHIFTS[0], 2)
+        r2 = self.read(self.RSHIFTS[1], 2)
+        r3 = self.read(self.RSHIFTS[2], 2)
+        r4 = self.read(self.RSHIFTS[3], 2)
+
+        self.modify(self.PSHIFTS[0], 3, p2)
+        self.modify(self.PSHIFTS[1], 3, p3)
+        self.modify(self.PSHIFTS[2], 3, p4)
+        self.modify(self.PSHIFTS[3], 3, p1)
+        
+        self.modify(self.RSHIFTS[0], 2, r2)
+        self.modify(self.RSHIFTS[1], 2, r3)
+        self.modify(self.RSHIFTS[2], 2, r4)
+        self.modify(self.RSHIFTS[3], 2, r1)
+
+    def F(self):
+
+        p1 = self.read(self.PSHIFTS[3], 3)
+        p2 = self.read(self.PSHIFTS[2], 3)
+        p3 = self.read(self.PSHIFTS[5], 3)
+        p4 = self.read(self.PSHIFTS[4], 3)
+
+        r1 = self.read(self.RSHIFTS[3], 2)
+        r2 = self.read(self.RSHIFTS[2], 2)
+        r3 = self.read(self.RSHIFTS[5], 2)
+        r4 = self.read(self.RSHIFTS[4], 2)
+
+        self.modify(self.PSHIFTS[3], 3, p4)
+        self.modify(self.PSHIFTS[2], 3, p1)
+        self.modify(self.PSHIFTS[5], 3, p2)
+        self.modify(self.PSHIFTS[4], 3, p3)
+        
+        self.modify(self.RSHIFTS[3], 2, (r4+1)%3)
+        self.modify(self.RSHIFTS[2], 2, (r1+2)%3)
+        self.modify(self.RSHIFTS[5], 2, (r2+1)%3)
+        self.modify(self.RSHIFTS[4], 2, (r3+2)%3)
+
+    def F2(self):
+
+        p1 = self.read(self.PSHIFTS[3], 3)
+        p2 = self.read(self.PSHIFTS[2], 3)
+        p3 = self.read(self.PSHIFTS[5], 3)
+        p4 = self.read(self.PSHIFTS[4], 3)
+
+        r1 = self.read(self.RSHIFTS[3], 2)
+        r2 = self.read(self.RSHIFTS[2], 2)
+        r3 = self.read(self.RSHIFTS[5], 2)
+        r4 = self.read(self.RSHIFTS[4], 2)
+
+        self.modify(self.PSHIFTS[3], 3, p3)
+        self.modify(self.PSHIFTS[2], 3, p4)
+        self.modify(self.PSHIFTS[5], 3, p1)
+        self.modify(self.PSHIFTS[4], 3, p2)
+        
+        self.modify(self.RSHIFTS[3], 2, r3)
+        self.modify(self.RSHIFTS[2], 2, r4)
+        self.modify(self.RSHIFTS[5], 2, r1)
+        self.modify(self.RSHIFTS[4], 2, r2)
+
+    def Fp(self):
+
+        p1 = self.read(self.PSHIFTS[3], 3)
+        p2 = self.read(self.PSHIFTS[2], 3)
+        p3 = self.read(self.PSHIFTS[5], 3)
+        p4 = self.read(self.PSHIFTS[4], 3)
+
+        r1 = self.read(self.RSHIFTS[3], 2)
+        r2 = self.read(self.RSHIFTS[2], 2)
+        r3 = self.read(self.RSHIFTS[5], 2)
+        r4 = self.read(self.RSHIFTS[4], 2)
+
+        self.modify(self.PSHIFTS[3], 3, p2)
+        self.modify(self.PSHIFTS[2], 3, p3)
+        self.modify(self.PSHIFTS[5], 3, p4)
+        self.modify(self.PSHIFTS[4], 3, p1)
+        
+        self.modify(self.RSHIFTS[3], 2, (r2+1)%3)
+        self.modify(self.RSHIFTS[2], 2, (r3+2)%3)
+        self.modify(self.RSHIFTS[5], 2, (r4+1)%3)
+        self.modify(self.RSHIFTS[4], 2, (r1+2)%3)
