@@ -70,4 +70,4 @@ metric), with the state counts by optimal solve length:
   precomputed pruning tables — see the move functions in `state.py` for
   where a faster, allocation-free table-driven version could replace the
   current per-field `read`/`modify` calls if solve time becomes an issue.
-- The program can only handle 2x2x2 Rubik's Cube with standard color scheme.
+- The program can only handle 2x2x2 Rubik's Cubes with the standard color scheme.
