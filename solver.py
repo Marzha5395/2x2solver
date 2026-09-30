@@ -81,27 +81,8 @@ class Solver():
             raise ValueError('State invalid')
         if sum(rotation_encoded) % 3 != 0:
             raise ValueError('Corner is twisted')
-
-        target_state = list(range(8))
-        target_rotation = [0] * 8
-
-        state_int = 0
-        for s in state_encoded:
-            state_int <<= 3
-            state_int += s
-        for r in rotation_encoded:
-            state_int <<= 2
-            state_int += r
         
-        target_int = 0
-        for s in target_state:
-            target_int <<= 3
-            target_int += s
-        for r in target_rotation:
-            target_int <<= 2
-            target_int += r
-        
-        return State(state_int), State(target_int)
+        return state_encoded, rotation_encoded
 
     def solve(self, state, target):
         if state == target:
@@ -210,7 +191,7 @@ class Solver():
                     finalmove = 8
                     break
 
-        if meetpoint == None:
+        if meetpoint is None:
             raise ValueError('Solution not found')
 
         solution = []
@@ -292,7 +273,9 @@ class Solver():
 
     def run(self, state):
         try:
-            state, target = self.encode(state)
+            pieces, rotation = self.encode(state)
+            state = State(pieces=pieces, rotation=rotation)
+            target = State(pieces=list(range(8)), rotation=[0]*8)
             solution = self.solve(state, target)
             return f"Solution found:\n{" ".join(solution)}"
         except ValueError as e:

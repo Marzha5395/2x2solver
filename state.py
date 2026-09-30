@@ -3,8 +3,9 @@ class State():
     RSHIFTS = [14, 12, 10, 8, 6, 4, 2, 0]
     __slots__ = 'state',
     
-    def __init__(self, state_int):
-        self.state = state_int
+    def __init__(self, state=0, pieces=None, rotation=None):
+        if pieces is None or rotation is None: self.state = state
+        else: self.state = self.encode(pieces, rotation)
 
     def __hash__(self):
         return hash(self.state)
@@ -23,211 +24,75 @@ class State():
         mask = (1 << n_bits) - 1
         return (self.state >> pos) & mask
 
+    def encode(self, pieces, rotation):
+        state = 0
+        for p in pieces:
+            state <<= 3
+            state += p
+        for r in rotation:
+            state <<= 2
+            state += r
+        return state
+
     def decode(self):
-        state_int = self.state
-        state, target = [], []
+        state = self.state
+        pieces, target = [], []
         for i in range(8):
-            target.append(state_int & 0b11)
-            state_int >>= 2
+            target.append(state & 0b11)
+            state >>= 2
         for i in range(8):
-            state.append(state_int & 0b111)
-            state_int >>= 3
-        return state[::-1], target[::-1]
+            pieces.append(state & 0b111)
+            state >>= 3
+        return pieces[::-1], target[::-1]
+
+    def move(self, pieces, n_turns, twist=False):
+
+        p1 = self.read(self.PSHIFTS[pieces[0]], 3)
+        p2 = self.read(self.PSHIFTS[pieces[1]], 3)
+        p3 = self.read(self.PSHIFTS[pieces[2]], 3)
+        p4 = self.read(self.PSHIFTS[pieces[3]], 3)
+
+        r1 = self.read(self.RSHIFTS[pieces[0]], 2)
+        r2 = self.read(self.RSHIFTS[pieces[1]], 2)
+        r3 = self.read(self.RSHIFTS[pieces[2]], 2)
+        r4 = self.read(self.RSHIFTS[pieces[3]], 2)
+
+        for _ in range(n_turns):
+            p1, p2, p3, p4 = p4, p1, p2, p3
+            r1, r2, r3, r4 = r4, r1, r2, r3
+        if twist:
+            r1 = (r1+1)%3
+            r2 = (r2+2)%3
+            r3 = (r3+1)%3
+            r4 = (r4+2)%3
+
+        self.modify(self.PSHIFTS[pieces[0]], 3, p1)
+        self.modify(self.PSHIFTS[pieces[1]], 3, p2)
+        self.modify(self.PSHIFTS[pieces[2]], 3, p3)
+        self.modify(self.PSHIFTS[pieces[3]], 3, p4)
+        
+        self.modify(self.RSHIFTS[pieces[0]], 2, r1)
+        self.modify(self.RSHIFTS[pieces[1]], 2, r2)
+        self.modify(self.RSHIFTS[pieces[2]], 2, r3)
+        self.modify(self.RSHIFTS[pieces[3]], 2, r4)
 
     def R(self):
-
-        p1 = self.read(self.PSHIFTS[2], 3)
-        p2 = self.read(self.PSHIFTS[1], 3)
-        p3 = self.read(self.PSHIFTS[6], 3)
-        p4 = self.read(self.PSHIFTS[5], 3)
-
-        r1 = self.read(self.RSHIFTS[2], 2)
-        r2 = self.read(self.RSHIFTS[1], 2)
-        r3 = self.read(self.RSHIFTS[6], 2)
-        r4 = self.read(self.RSHIFTS[5], 2)
-
-        self.modify(self.PSHIFTS[2], 3, p4)
-        self.modify(self.PSHIFTS[1], 3, p1)
-        self.modify(self.PSHIFTS[6], 3, p2)
-        self.modify(self.PSHIFTS[5], 3, p3)
-        
-        self.modify(self.RSHIFTS[2], 2, (r4+1)%3)
-        self.modify(self.RSHIFTS[1], 2, (r1+2)%3)
-        self.modify(self.RSHIFTS[6], 2, (r2+1)%3)
-        self.modify(self.RSHIFTS[5], 2, (r3+2)%3)
-
+        self.move([2, 1, 6, 5], 1, twist=True)
     def R2(self):
-
-        p1 = self.read(self.PSHIFTS[2], 3)
-        p2 = self.read(self.PSHIFTS[1], 3)
-        p3 = self.read(self.PSHIFTS[6], 3)
-        p4 = self.read(self.PSHIFTS[5], 3)
-
-        r1 = self.read(self.RSHIFTS[2], 2)
-        r2 = self.read(self.RSHIFTS[1], 2)
-        r3 = self.read(self.RSHIFTS[6], 2)
-        r4 = self.read(self.RSHIFTS[5], 2)
-
-        self.modify(self.PSHIFTS[2], 3, p3)
-        self.modify(self.PSHIFTS[1], 3, p4)
-        self.modify(self.PSHIFTS[6], 3, p1)
-        self.modify(self.PSHIFTS[5], 3, p2)
-        
-        self.modify(self.RSHIFTS[2], 2, r3)
-        self.modify(self.RSHIFTS[1], 2, r4)
-        self.modify(self.RSHIFTS[6], 2, r1)
-        self.modify(self.RSHIFTS[5], 2, r2)
-
+        self.move([2, 1, 6, 5], 2, twist=False)
     def Rp(self):
-
-        p1 = self.read(self.PSHIFTS[2], 3)
-        p2 = self.read(self.PSHIFTS[1], 3)
-        p3 = self.read(self.PSHIFTS[6], 3)
-        p4 = self.read(self.PSHIFTS[5], 3)
-
-        r1 = self.read(self.RSHIFTS[2], 2)
-        r2 = self.read(self.RSHIFTS[1], 2)
-        r3 = self.read(self.RSHIFTS[6], 2)
-        r4 = self.read(self.RSHIFTS[5], 2)
-
-        self.modify(self.PSHIFTS[2], 3, p2)
-        self.modify(self.PSHIFTS[1], 3, p3)
-        self.modify(self.PSHIFTS[6], 3, p4)
-        self.modify(self.PSHIFTS[5], 3, p1)
-        
-        self.modify(self.RSHIFTS[2], 2, (r2+1)%3)
-        self.modify(self.RSHIFTS[1], 2, (r3+2)%3)
-        self.modify(self.RSHIFTS[6], 2, (r4+1)%3)
-        self.modify(self.RSHIFTS[5], 2, (r1+2)%3)
+        self.move([2, 1, 6, 5], 3, twist=True)
 
     def U(self):
-
-        p1 = self.read(self.PSHIFTS[0], 3)
-        p2 = self.read(self.PSHIFTS[1], 3)
-        p3 = self.read(self.PSHIFTS[2], 3)
-        p4 = self.read(self.PSHIFTS[3], 3)
-
-        r1 = self.read(self.RSHIFTS[0], 2)
-        r2 = self.read(self.RSHIFTS[1], 2)
-        r3 = self.read(self.RSHIFTS[2], 2)
-        r4 = self.read(self.RSHIFTS[3], 2)
-
-        self.modify(self.PSHIFTS[0], 3, p4)
-        self.modify(self.PSHIFTS[1], 3, p1)
-        self.modify(self.PSHIFTS[2], 3, p2)
-        self.modify(self.PSHIFTS[3], 3, p3)
-        
-        self.modify(self.RSHIFTS[0], 2, r4)
-        self.modify(self.RSHIFTS[1], 2, r1)
-        self.modify(self.RSHIFTS[2], 2, r2)
-        self.modify(self.RSHIFTS[3], 2, r3)
-
+        self.move([0, 1, 2, 3], 1, twist=False)
     def U2(self):
-
-        p1 = self.read(self.PSHIFTS[0], 3)
-        p2 = self.read(self.PSHIFTS[1], 3)
-        p3 = self.read(self.PSHIFTS[2], 3)
-        p4 = self.read(self.PSHIFTS[3], 3)
-
-        r1 = self.read(self.RSHIFTS[0], 2)
-        r2 = self.read(self.RSHIFTS[1], 2)
-        r3 = self.read(self.RSHIFTS[2], 2)
-        r4 = self.read(self.RSHIFTS[3], 2)
-
-        self.modify(self.PSHIFTS[0], 3, p3)
-        self.modify(self.PSHIFTS[1], 3, p4)
-        self.modify(self.PSHIFTS[2], 3, p1)
-        self.modify(self.PSHIFTS[3], 3, p2)
-        
-        self.modify(self.RSHIFTS[0], 2, r3)
-        self.modify(self.RSHIFTS[1], 2, r4)
-        self.modify(self.RSHIFTS[2], 2, r1)
-        self.modify(self.RSHIFTS[3], 2, r2)
-    
+        self.move([0, 1, 2, 3], 2, twist=False)
     def Up(self):
-
-        p1 = self.read(self.PSHIFTS[0], 3)
-        p2 = self.read(self.PSHIFTS[1], 3)
-        p3 = self.read(self.PSHIFTS[2], 3)
-        p4 = self.read(self.PSHIFTS[3], 3)
-
-        r1 = self.read(self.RSHIFTS[0], 2)
-        r2 = self.read(self.RSHIFTS[1], 2)
-        r3 = self.read(self.RSHIFTS[2], 2)
-        r4 = self.read(self.RSHIFTS[3], 2)
-
-        self.modify(self.PSHIFTS[0], 3, p2)
-        self.modify(self.PSHIFTS[1], 3, p3)
-        self.modify(self.PSHIFTS[2], 3, p4)
-        self.modify(self.PSHIFTS[3], 3, p1)
-        
-        self.modify(self.RSHIFTS[0], 2, r2)
-        self.modify(self.RSHIFTS[1], 2, r3)
-        self.modify(self.RSHIFTS[2], 2, r4)
-        self.modify(self.RSHIFTS[3], 2, r1)
+        self.move([0, 1, 2, 3], 3, twist=False)
 
     def F(self):
-
-        p1 = self.read(self.PSHIFTS[3], 3)
-        p2 = self.read(self.PSHIFTS[2], 3)
-        p3 = self.read(self.PSHIFTS[5], 3)
-        p4 = self.read(self.PSHIFTS[4], 3)
-
-        r1 = self.read(self.RSHIFTS[3], 2)
-        r2 = self.read(self.RSHIFTS[2], 2)
-        r3 = self.read(self.RSHIFTS[5], 2)
-        r4 = self.read(self.RSHIFTS[4], 2)
-
-        self.modify(self.PSHIFTS[3], 3, p4)
-        self.modify(self.PSHIFTS[2], 3, p1)
-        self.modify(self.PSHIFTS[5], 3, p2)
-        self.modify(self.PSHIFTS[4], 3, p3)
-        
-        self.modify(self.RSHIFTS[3], 2, (r4+1)%3)
-        self.modify(self.RSHIFTS[2], 2, (r1+2)%3)
-        self.modify(self.RSHIFTS[5], 2, (r2+1)%3)
-        self.modify(self.RSHIFTS[4], 2, (r3+2)%3)
-
+        self.move([3, 2, 5, 4], 1, twist=True)
     def F2(self):
-
-        p1 = self.read(self.PSHIFTS[3], 3)
-        p2 = self.read(self.PSHIFTS[2], 3)
-        p3 = self.read(self.PSHIFTS[5], 3)
-        p4 = self.read(self.PSHIFTS[4], 3)
-
-        r1 = self.read(self.RSHIFTS[3], 2)
-        r2 = self.read(self.RSHIFTS[2], 2)
-        r3 = self.read(self.RSHIFTS[5], 2)
-        r4 = self.read(self.RSHIFTS[4], 2)
-
-        self.modify(self.PSHIFTS[3], 3, p3)
-        self.modify(self.PSHIFTS[2], 3, p4)
-        self.modify(self.PSHIFTS[5], 3, p1)
-        self.modify(self.PSHIFTS[4], 3, p2)
-        
-        self.modify(self.RSHIFTS[3], 2, r3)
-        self.modify(self.RSHIFTS[2], 2, r4)
-        self.modify(self.RSHIFTS[5], 2, r1)
-        self.modify(self.RSHIFTS[4], 2, r2)
-
+        self.move([3, 2, 5, 4], 2, twist=False)
     def Fp(self):
-
-        p1 = self.read(self.PSHIFTS[3], 3)
-        p2 = self.read(self.PSHIFTS[2], 3)
-        p3 = self.read(self.PSHIFTS[5], 3)
-        p4 = self.read(self.PSHIFTS[4], 3)
-
-        r1 = self.read(self.RSHIFTS[3], 2)
-        r2 = self.read(self.RSHIFTS[2], 2)
-        r3 = self.read(self.RSHIFTS[5], 2)
-        r4 = self.read(self.RSHIFTS[4], 2)
-
-        self.modify(self.PSHIFTS[3], 3, p2)
-        self.modify(self.PSHIFTS[2], 3, p3)
-        self.modify(self.PSHIFTS[5], 3, p4)
-        self.modify(self.PSHIFTS[4], 3, p1)
-        
-        self.modify(self.RSHIFTS[3], 2, (r2+1)%3)
-        self.modify(self.RSHIFTS[2], 2, (r3+2)%3)
-        self.modify(self.RSHIFTS[5], 2, (r4+1)%3)
-        self.modify(self.RSHIFTS[4], 2, (r1+2)%3)
+        self.move([3, 2, 5, 4], 3, twist=True)
