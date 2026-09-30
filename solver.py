@@ -1,8 +1,17 @@
 from state import State
 from collections import deque
 
+COLOR2INT = {
+    "W":1,
+    "Y":2,
+    "R":3,
+    "O":4,
+    "B":5,
+    "G":6,
+}
+
 class Solver():
-    neighbors = [
+    NEIGHBORS = [
         (4, 17), (16, 13), (8, 5), (12, 9),
         (17, 0), (2, 8), (22, 19), (10, 20),
         (5, 2), (3, 12), (20, 7), (14, 21),
@@ -10,11 +19,11 @@ class Solver():
         (13, 1), (0, 4), (23, 15), (6, 22),
         (7, 10), (11, 14), (19, 6), (15, 18)
     ]
-    opposite = [0, 2, 1, 4, 3, 6, 5]
-    sticker2rotation = [0, 0, 0, 0, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 0, 0, 0, 0]
-    sticker2piece = [0, 1, 3, 2, 0, 3, 7, 4, 3, 2, 4, 5, 2, 1, 5, 6, 1, 0, 6, 7, 4, 5, 7, 6]
-    moves = ["R", "R2", "R'", "U", "U2", "U'", "F", "F2", "F'"]
-    oppositemoves = ["R'", "R2", "R", "U'", "U2", "U", "F'", "F2", "F"]
+    OPPOSITE = [0, 2, 1, 4, 3, 6, 5]
+    STICKER2ROTATION = [0, 0, 0, 0, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 0, 0, 0, 0]
+    STICKER2PIECE = [0, 1, 3, 2, 0, 3, 7, 4, 3, 2, 4, 5, 2, 1, 5, 6, 1, 0, 6, 7, 4, 5, 7, 6]
+    MOVES = ["R", "R2", "R'", "U", "U2", "U'", "F", "F2", "F'"]
+    OPPOSITEMOVES = ["R'", "R2", "R", "U'", "U2", "U", "F'", "F2", "F"]
 
     def __init__(self):
         pass
@@ -28,16 +37,16 @@ class Solver():
             if state.count(i) != 4:
                 raise ValueError('Colors not valid')
 
-        target_faces = [self.opposite[state[22]], state[6], self.opposite[state[19]], self.opposite[state[6]], state[19], state[22]]
+        target_faces = [self.OPPOSITE[state[22]], state[6], self.OPPOSITE[state[19]], self.OPPOSITE[state[6]], state[19], state[22]]
 
         state_encoded = [-1] * 8
         rotation_encoded = [-1] * 8
 
         for i in range(24):
             if state[i] == target_faces[0]:
-                n1, n2 = self.neighbors[i]
-                piece = self.sticker2piece[i]
-                rotation = self.sticker2rotation[i]
+                n1, n2 = self.NEIGHBORS[i]
+                piece = self.STICKER2PIECE[i]
+                rotation = self.STICKER2ROTATION[i]
                 if state[n1] == target_faces[1] and state[n2] == target_faces[4]:
                     state_encoded[piece] = 0
                     rotation_encoded[piece] = rotation
@@ -52,9 +61,9 @@ class Solver():
                     rotation_encoded[piece] = rotation
 
             if state[i] == target_faces[5]:
-                n1, n2 = self.neighbors[i]
-                piece = self.sticker2piece[i]
-                rotation = self.sticker2rotation[i]
+                n1, n2 = self.NEIGHBORS[i]
+                piece = self.STICKER2PIECE[i]
+                rotation = self.STICKER2ROTATION[i]
                 if state[n1] == target_faces[1] and state[n2] == target_faces[2]:
                     state_encoded[piece] = 4
                     rotation_encoded[piece] = rotation
@@ -95,6 +104,8 @@ class Solver():
         return State(state_int), State(target_int)
 
     def solve(self, state, target):
+        if state == target:
+            raise ValueError("Cube already solved")
         visited = {}
         bfs = deque()
         bfs.append(state)
@@ -205,7 +216,7 @@ class Solver():
         solution = []
         if visited[meetpoint][0]:
             backtrack = State(meetpoint.state)
-            solution.append(self.moves[finalmove])
+            solution.append(self.MOVES[finalmove])
             if finalmove == 0: backtrack.Rp()
             if finalmove == 1: backtrack.R2()
             if finalmove == 2: backtrack.R()
@@ -216,7 +227,7 @@ class Solver():
             if finalmove == 7: backtrack.F2()
             if finalmove == 8: backtrack.F()
             while visited[backtrack][1] < 9:
-                solution.append(self.moves[visited[backtrack][1]])
+                solution.append(self.MOVES[visited[backtrack][1]])
                 if visited[backtrack][1] == 0: backtrack.Rp()
                 elif visited[backtrack][1] == 1: backtrack.R2()
                 elif visited[backtrack][1] == 2: backtrack.R()
@@ -229,7 +240,7 @@ class Solver():
             backtrack = State(meetpoint.state)
             solution.reverse()
             while visited[backtrack][1] < 9:
-                solution.append(self.oppositemoves[visited[backtrack][1]])
+                solution.append(self.OPPOSITEMOVES[visited[backtrack][1]])
                 if visited[backtrack][1] == 0: backtrack.Rp()
                 elif visited[backtrack][1] == 1: backtrack.R2()
                 elif visited[backtrack][1] == 2: backtrack.R()
@@ -242,7 +253,7 @@ class Solver():
         else:
             backtrack = State(meetpoint.state)
             while visited[backtrack][1] < 9:
-                solution.append(self.moves[visited[backtrack][1]])
+                solution.append(self.MOVES[visited[backtrack][1]])
                 if visited[backtrack][1] == 0: backtrack.Rp()
                 elif visited[backtrack][1] == 1: backtrack.R2()
                 elif visited[backtrack][1] == 2: backtrack.R()
@@ -254,7 +265,7 @@ class Solver():
                 elif visited[backtrack][1] == 8: backtrack.F()
             backtrack = State(meetpoint.state)
             solution.reverse()
-            solution.append(self.oppositemoves[finalmove])
+            solution.append(self.OPPOSITEMOVES[finalmove])
             if finalmove == 0: backtrack.Rp()
             if finalmove == 1: backtrack.R2()
             if finalmove == 2: backtrack.R()
@@ -265,7 +276,7 @@ class Solver():
             if finalmove == 7: backtrack.F2()
             if finalmove == 8: backtrack.F()
             while visited[backtrack][1] < 9:
-                solution.append(self.oppositemoves[visited[backtrack][1]])
+                solution.append(self.OPPOSITEMOVES[visited[backtrack][1]])
                 if visited[backtrack][1] == 0: backtrack.Rp()
                 elif visited[backtrack][1] == 1: backtrack.R2()
                 elif visited[backtrack][1] == 2: backtrack.R()
@@ -283,15 +294,63 @@ class Solver():
         try:
             state, target = self.encode(state)
             solution = self.solve(state, target)
-            return solution
+            return f"Solution found:\n{" ".join(solution)}"
         except ValueError as e:
             return f"Error: {e}"
         
 def main():
-    state = [6,1,3,1,4,5,3,5,1,6,2,4,3,5,2,6,4,1,2,6,3,5,2,4]
+    introtext = """
+    Welcome to 2x2solver! Enter the state of the cube in the following format:
+
+                +---+---+
+                | A | B |
+                |---|---|
+                | C | D |
+                +---+---+
+    +---+---+   +---+---+   +---+---+   +---+---+
+    | E | F |   | I | J |   | M | N |   | Q | R |
+    |---|---|   |---|---|   |---|---|   |---|---|
+    | G | H |   | K | L |   | O | P |   | T | S |
+    +---+---+   +---+---+   +---+---+   +---+---+
+                +---+---+
+                | U | V |
+                |---|---|
+                | W | X |
+                +---+---+
+
+    U face: A B C D
+    L face: E F G H
+    F face: I J K L
+    R face: M N O P
+    B face: Q R S T
+    D face: U V W X
+
+    Each of the stickers should be represented with a single character:
+    White: W
+    Yellow: Y
+    Red: R
+    Orange: O
+    Blue: B
+    Green: G
+
+    Please enter the state of your cube:
+    """
+    print(introtext)
+
+    state = []
+    for f in ["U", "L", "F", "R", "B", "D"]:
+        try:
+            face = "".join(input(f"{f} face: ").split()).upper()
+            assert len(face) == 4
+            for s in face:
+                state.append(COLOR2INT[s])
+        except:
+            print("Invalid input")
+            return
+
     solver = Solver()
     solution = solver.run(state)
-    print(*solution)
+    print(f"\n{solution}")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

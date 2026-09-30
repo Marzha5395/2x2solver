@@ -118,9 +118,9 @@ class App():
         )
         self.solvebutton.grid(row=0, column=1, padx=PANEL_PAD)
 
-        self.solutionfield = tk.Label(self.root, text='', bg=BACKGROUND, font=('Arial', 50))
+        introtext = 'Welcome to 2x2solver! Enter the state of the cube to start.'
+        self.solutionfield = tk.Label(self.root, text=introtext, bg=BACKGROUND, font=('Arial', 50))
         self.solutionfield.place(relx=0.5, rely=0.1, anchor='center')
-
 
         self.root.mainloop()
 
