@@ -1,6 +1,6 @@
 # 2x2solver
 
-A GUI tool for generating the shortest solution to any scrambled 2x2x2 Rubik's Cube.
+A GUI tool for finding the shortest solution to any scrambled 2x2x2 Rubik's Cube.
 
 ## Files
 
