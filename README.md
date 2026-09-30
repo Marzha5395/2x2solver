@@ -1,7 +1,6 @@
 # 2x2solver
 
-A GUI tool for solving a scrambled 2x2x2 Rubik's Cube (pocket cube), using a
-bidirectional BFS over a bit-packed cube state.
+A GUI tool for generating the shortest solution to any scrambled 2x2x2 Rubik's Cube.
 
 ## Files
 
@@ -23,16 +22,16 @@ bidirectional BFS over a bit-packed cube state.
 ## Usage
 
 ```bash
-python app.py
+python3 app.py
 ```
 
 Set all 24 stickers to match your physical cube, then click **SOLVE**. The
 move sequence appears at the top of the window.
 
-Or run the solver directly on a hardcoded scramble:
+Or run the solver directly and input your scramble:
 
 ```bash
-python solver.py
+python3 solver.py
 ```
 
 ## How it works
@@ -71,4 +70,4 @@ metric), with the state counts by optimal solve length:
   precomputed pruning tables — see the move functions in `state.py` for
   where a faster, allocation-free table-driven version could replace the
   current per-field `read`/`modify` calls if solve time becomes an issue.
-  
+- The program can only handle 2x2x2 Rubik's Cube with standard color scheme.
