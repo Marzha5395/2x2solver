@@ -333,7 +333,7 @@ def main():
 
     solver = Solver()
     solution = solver.run(state)
-    print(f"\n{solution}")
+    print(f"{solution}")
 
 if __name__ == "__main__":
     main()
