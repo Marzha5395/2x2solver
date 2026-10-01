@@ -117,6 +117,14 @@ class App():
             command=self.solve
         )
         self.solvebutton.grid(row=0, column=1, padx=PANEL_PAD)
+        self.scramblebutton = tk.Button(
+            self.buttons,
+            text='SCRAMBLE',
+            width=10,
+            height=3,
+            command=self.scramble
+        )
+        self.scramblebutton.grid(row=0, column=2, padx=PANEL_PAD)
 
         introtext = 'Welcome to 2x2solver! Enter the state of the cube to start.'
         self.solutionfield = tk.Label(self.root, text=introtext, bg=BACKGROUND, font=('Arial', 50))
@@ -146,6 +154,12 @@ class App():
             self.active.configure(bg=color, activebackground=TO_HOVER[color])
             self.state[self.activeid] = COLOR2INT[color]
             if self.activeid < 23: self.activate(self.activeid + 1)
+
+    def scramble(self):
+        self.state = Solver().scramble()
+        for s, c in zip(self.stickers, self.state):
+            s.configure(bg=COLORS[c], activebackground=COLORS_HOVER[c])
+        self.activate(0)
 
     def solve(self):
         solver = Solver()

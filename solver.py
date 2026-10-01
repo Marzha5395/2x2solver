@@ -1,5 +1,6 @@
 from state import State
 from collections import deque
+import random
 
 COLOR2INT = {
     "W":1,
@@ -270,6 +271,25 @@ class Solver():
 
         return solution
 
+
+    def scramble(self, n=11):
+        state = State(pieces=list(range(8)), rotation=[0]*8)
+        last = None
+        for _ in range(n):
+            face = random.choice([f for f in "RUF" if f != last])
+            getattr(state, face + random.choice(["", "2", "p"]))()
+            last = face
+        pieces, rotation = state.decode()
+        faces = [1, 5, 3, 6, 4, 2]
+        sides = [(1, 4), (4, 3), (3, 2), (2, 1), (1, 2), (2, 3), (3, 4), (4, 1)]
+        colors = [0] * 24
+        for i in range(24):
+            piece, rot = pieces[self.STICKER2PIECE[i]], rotation[self.STICKER2PIECE[i]]
+            if self.STICKER2ROTATION[i] == rot:
+                n1, n2 = self.NEIGHBORS[i]
+                colors[i] = faces[0 if piece < 4 else 5]
+                colors[n1], colors[n2] = faces[sides[piece][0]], faces[sides[piece][1]]
+        return colors
 
     def run(self, state):
         try:
