@@ -3,9 +3,9 @@ class State():
     RSHIFTS = [14, 12, 10, 8, 6, 4, 2, 0]
     __slots__ = 'state',
     
-    def __init__(self, state=0, pieces=None, rotation=None):
-        if pieces is None or rotation is None: self.state = state
-        else: self.state = self.encode(pieces, rotation)
+    def __init__(self, state=0, pieces=None, rotations=None):
+        if pieces is None or rotations is None: self.state = state
+        else: self.state = self.encode(pieces, rotations)
 
     def __hash__(self):
         return hash(self.state)
@@ -24,12 +24,12 @@ class State():
         mask = (1 << n_bits) - 1
         return (self.state >> pos) & mask
 
-    def encode(self, pieces, rotation):
+    def encode(self, pieces, rotations):
         state = 0
         for p in pieces:
             state <<= 3
             state += p
-        for r in rotation:
+        for r in rotations:
             state <<= 2
             state += r
         return state
@@ -47,34 +47,20 @@ class State():
 
     def move(self, pieces, n_turns, twist=False):
 
-        p1 = self.read(self.PSHIFTS[pieces[0]], 3)
-        p2 = self.read(self.PSHIFTS[pieces[1]], 3)
-        p3 = self.read(self.PSHIFTS[pieces[2]], 3)
-        p4 = self.read(self.PSHIFTS[pieces[3]], 3)
-
-        r1 = self.read(self.RSHIFTS[pieces[0]], 2)
-        r2 = self.read(self.RSHIFTS[pieces[1]], 2)
-        r3 = self.read(self.RSHIFTS[pieces[2]], 2)
-        r4 = self.read(self.RSHIFTS[pieces[3]], 2)
+        p_val = [self.read(self.PSHIFTS[p], 3) for p in pieces]
+        r_val = [self.read(self.RSHIFTS[p], 2) for p in pieces]
 
         for _ in range(n_turns):
-            p1, p2, p3, p4 = p4, p1, p2, p3
-            r1, r2, r3, r4 = r4, r1, r2, r3
+            p_val = p_val[-1:] + p_val[:-1]
+            r_val = r_val[-1:] + r_val[:-1]
         if twist:
-            r1 = (r1+1)%3
-            r2 = (r2+2)%3
-            r3 = (r3+1)%3
-            r4 = (r4+2)%3
+            r_val = [(r_val[i] + i%2 + 1) % 3 for i in range(len(r_val))]
 
-        self.modify(self.PSHIFTS[pieces[0]], 3, p1)
-        self.modify(self.PSHIFTS[pieces[1]], 3, p2)
-        self.modify(self.PSHIFTS[pieces[2]], 3, p3)
-        self.modify(self.PSHIFTS[pieces[3]], 3, p4)
+        for i in range(len(p_val)):
+            self.modify(self.PSHIFTS[pieces[i]], 3, p_val[i])
         
-        self.modify(self.RSHIFTS[pieces[0]], 2, r1)
-        self.modify(self.RSHIFTS[pieces[1]], 2, r2)
-        self.modify(self.RSHIFTS[pieces[2]], 2, r3)
-        self.modify(self.RSHIFTS[pieces[3]], 2, r4)
+        for i in range(len(r_val)):
+            self.modify(self.RSHIFTS[pieces[i]], 2, r_val[i])
 
     def R(self):
         self.move([2, 1, 6, 5], 1, twist=True)
