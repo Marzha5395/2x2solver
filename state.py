@@ -27,7 +27,7 @@ class State:
     def read(self, pos, n_bits):
         # ========================================
         # Helper function
-        # Read the n_bits bits at pos
+        # Read the n_bits bits at position pos
         # ========================================
         mask = (1 << n_bits) - 1
         return (self.state >> pos) & mask
